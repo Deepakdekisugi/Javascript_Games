@@ -21,7 +21,7 @@ Clone the repository to your local machine using the command:
 
 bash
 Copy code
-git clone https://github.com/your-username/javascript-games.git
+git clone https://github.com/Deepakdekisugi/javascript_games.git
 Navigate to the cloned directory:
 
 bash
