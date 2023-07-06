@@ -40,21 +40,23 @@ class Snake {
 
 class Apple {
     constructor() {
-        var isTouching;
+        let isTouching
         while(true) {
             isTouching = false;
             this.x = Math.floor(Math.random() * canvas.width / snake.size) * snake.size
             this.y = Math.floor(Math.random() * canvas.height / snake.size) * snake.size
-            for ( var i = 0; i < snake.tail.length; i++) {
+            for ( let i = 0; i < snake.tail.length; i++) {
                 if (this.x == snake.tail[i].x && this.y == snake.tail[i].y) {
                     isTouching = true
                 }
             }
+
+            this.color = "red"
+            this.size = snake.size
+
             if (!isTouching) {
                 break;
             }
-            this.color = "pink"
-            this.size = snake.size
         }
     }
 }
@@ -84,10 +86,10 @@ function show () {
 function update(){
     canvasContext.clearRect(0, 0, canvas.width, canvas.height)
     snake.move()
-    eaatApple()
+    eatApple()
 }
 
-function eaatApple() {
+function eatApple() {
     if (snake.tail[snake.tail.length - 1].x == apple.x && 
         snake.tail[snake.tail.length - 1].y == apple.y) {
             snake.tail[snake.tail.length] = {x: apple.x, y: apple.y}
