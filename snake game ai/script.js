@@ -26,7 +26,7 @@ class Snake {
                 x : this.tail[this.tail.length - 1].x,
                 y : this.tail[this.tail.length - 1].y + this.size
             }
-        }else if(this.rotateX == -1){
+        }else if(this.rotateY == -1){
             newRect = {
                 x : this.tail[this.tail.length - 1].x,
                 y : this.tail[this.tail.length - 1].y - this.size
@@ -47,7 +47,7 @@ class Apple {
             this.y = Math.floor(Math.random() * canvas.height / snake.size) * snake.size
             for ( var i = 0; i < snake.tail.length; i++) {
                 if (this.x == snake.tail[i].x && this.y == snake.tail[i].y) {
-                    isTouching = true;
+                    isTouching = true
                 }
             }
             if (!isTouching) {
@@ -66,7 +66,7 @@ var snake = new Snake();
 
 var apple = new Apple();
 
-var canvasContext = canvas.getContxt('2d');
+var canvasContext = canvas.getContext('2d');
 
 window.onload = () => {
     gameLoop();
@@ -79,4 +79,28 @@ function gameLoop () {
 function show () {
     update();
     draw();
+}
+
+function update(){
+
+}
+
+function draw() {
+    createRect(0, 0, canvas.width, canvas.height, "black")
+    createRect(0, 0, canvas.width, canvas.height)
+    for ( var i = 0; i < snake.tail.length; i++) {
+        createRect(snake.tail[i].x + 2.5, snake.tai[i].y + 2.5,
+            snake.size - 5, snake.size - 5, "white")
+    }
+
+    canvasContext.font = "20px Arial"
+    canvasContext.fillStyle = "#00ff42"
+    canvasContext.fillText("Score: ", (snake.tail.length + 1),
+        canvas.width -120, 18 );
+    createRect(apple.x, apple.y, apple.size, apple.size, apple.color)
+}
+
+function createRect(x, y, width, height, color) {
+    canvasContext.fillStyle = color
+    canvasContext.fillRect(x, y, width, height)
 }
