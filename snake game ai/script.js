@@ -40,6 +40,8 @@ class Snake {
 
 class Apple {
     constructor() {
+        console.log("apple")
+        console.log(snake.size)
         let isTouching
         while(true) {
             isTouching = false;
@@ -53,6 +55,7 @@ class Apple {
 
             this.color = "red"
             this.size = snake.size
+            console.log(this.x, this.y)
 
             if (!isTouching) {
                 break;
@@ -75,7 +78,7 @@ window.onload = () => {
 }
 
 function gameLoop () {
-    setInterval(show, 1000/15)
+    setInterval(show, 1000/20)
 }
 
 function show () {
@@ -87,6 +90,20 @@ function update(){
     canvasContext.clearRect(0, 0, canvas.width, canvas.height)
     snake.move()
     eatApple()
+    checkHitWall();
+}
+
+function checkHitWall() {
+    let headTail = snake.tail[snake.tail.length - 1]
+    if (headTail.x == -snake.size) {
+        headTail.x = canvas.width - snake.size
+    }else if (headTail.x == canvas.width) {
+        headTail.x = 0
+    }else if (headTail.y == -snake.size) {
+        headTail.y = canvas.height - snake.size
+    }else if (headTail.y == canvas.height) {
+        headTail.y = 0
+    }
 }
 
 function eatApple() {
