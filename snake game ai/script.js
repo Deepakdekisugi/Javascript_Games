@@ -41,14 +41,17 @@ function eatApple() {
 }
 
 function gameOver() {
+    highScore = Math.max(highScore, snake.tail.length - 1)
+    highScoreElement.textContent = highScore;
 
+    snake.initVars();
 }
 
 function checkCollision() {
     let headTail = snake.tail[snake.tail.length -1]
     if(headTail.x <= -snake.size || //wall hit
         headTail.x >= canvas.width ||
-        headTail.y <= snake.size ||
+        headTail.y <= -snake.size ||
         headTail.y >= canvas.height) {
             gameOver()
             return
@@ -100,10 +103,14 @@ window.addEventListener("keydown", (event) => {
 })
 
 class Snake {
-    constructor(x, y, size) {
-        this.x = x
-        this.y = y
-        this.size = size
+    constructor() {
+        this.initVars();
+    }
+
+    initVars() {
+        this.x = 20;
+        this.y = 20;
+        this.size = 20;
         this.tail = [{x:this.x, y:this.y}]
         this.rotateX = 0
         this.rotateY = 1
@@ -164,5 +171,5 @@ class Apple{
     }
 }
 
-const snake = new Snake(20,20,20);
+const snake = new Snake();
 let apple = new Apple();
