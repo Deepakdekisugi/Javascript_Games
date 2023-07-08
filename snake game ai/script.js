@@ -1,12 +1,14 @@
-const canvas = document.getElementById("canvas")
-const canvasContext = canvas.getContext('2d')
-let gameSpeedElement = document.getElementById("gameSpeed")
-let gameSpeed = 1000;
+const canvas = document.getElementById("canvas");
+const canvasContext = canvas.getContext("2d");
+let gameSpeedElement = document.getElementById("gameSpeed");
+let gameSpeed = 10;
 let highScore = 0;
 let averageScore = 0;
 let epochNumber = 0;
 
-let highScoreElement = document.getElementById("highScore")
+let highScoreElement = document.getElementById("highScore");
+let averageScoreElement = document.getElementById("averageScore");
+let epochNumberElement = document.getElementById("epochNumber");
 
 gameSpeedElement.addEventListener("change", () => {
     gameSpeed = parseInt(gameSpeedElement.textContent);
@@ -44,6 +46,9 @@ function gameOver() {
     highScore = Math.max(highScore, snake.tail.length - 1)
     highScoreElement.textContent = highScore;
 
+    epochNumberElement.textContent = epochNumber++
+
+    averageScoreElement.textContent = (parseInt(averageScoreElement, textContent) * epochNumber +snake.tail.length -1) / epochNumber;
     snake.initVars();
 }
 
@@ -56,6 +61,7 @@ function checkCollision() {
             gameOver()
             return
         }
+
     for (let i = 0; i < snake.tail.length - 2; i++) { //self bite
         if (headTail.x == snake.tail[i].x && headTail.y == snake.tail[i].y) {
             gameOver()
