@@ -131,7 +131,10 @@ class RLSnake{
     }
 
     upadate() {
+        this.reward(this.state, this.getAction(this.state))
+        this.checkDirection()
 
+        let action = this.getAction(this.state)
     }
 
     reward(state, action) {
