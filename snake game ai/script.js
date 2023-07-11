@@ -124,6 +124,30 @@ class RLSnake{
         this.state = this.initialState
         this.Q_table = {}
     }
+
+    calculateState() {
+        
+    }
+
+    upadate() {
+
+    }
+
+    reward(state, action) {
+
+    }
+
+    implementAction(action) {
+
+    }
+
+    getQ(state, action) {
+
+    }
+
+    getAction(state) {
+
+    }
 }
 
 class Snake {
