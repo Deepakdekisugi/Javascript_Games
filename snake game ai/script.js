@@ -48,7 +48,7 @@ function gameOver() {
 
     epochNumberElement.textContent = epochNumber++
 
-    averageScoreElement.textContent = (parseInt(averageScoreElement, textContent) * epochNumber +snake.tail.length -1) / epochNumber;
+    averageScoreElement.textContent = (parseInt(averageScoreElement.textContent) * epochNumber +snake.tail.length -1) / epochNumber;
     snake.initVars();
 }
 
@@ -106,7 +106,25 @@ window.addEventListener("keydown", (event) => {
             snake.rotateY = 1
         }
     }, 1)
-})
+});
+
+class RLSnake{
+    constructor() {
+        this.alpha = 0.2
+        this.gamma = 0.2
+        this.noEatLoopCount = 0
+        this.maxNoEatLoopCount = 500
+        this.isAheadClearIndex = 0
+        this.isLeftClearIndex = 1
+        this.isRightClearIndex = 2
+        this.isAppleAheadIndex = 3
+        this.isAppleLeftIndex = 4
+        this.isAppleRightIndex = 5
+        this.initialState = [1, 1, 1, 0, 0, 0]
+        this.state = this.initialState
+        this.Q_table = {}
+    }
+}
 
 class Snake {
     constructor() {
