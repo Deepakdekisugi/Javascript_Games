@@ -148,6 +148,77 @@ class RLSnake{
     getAction(state) {
 
     }
+
+    checkDirection() {
+        let correspondingSize;
+        let headTail = snake.tail[snake.tail.length - 1]
+        let rx = snake.rotateX
+        let ry = snake.rotateY
+
+        //wall added
+        if(
+            (ry == 1 && headTail.x == 0) ||
+            (rx == 1 && headTail.y + size == canvas.height) ||
+            (ry == -1 && headTail.x + size == canvas.width) ||
+            (rx == -1 && headTail.x == 0)
+        ) {
+            this.state[this.isRightClearIndex] = 0
+        }
+
+
+        if(
+            (ry == 1 && headTail.y + size == canvas.height) ||
+            (rx == 1 && headTail.x + size == canvas.width) ||
+            (ry == -1 && headTail.x == 0) ||
+            (rx == -1 && headTail.x == 0)
+        ) {
+            this.state[this.isAheadClearIndex] = 0
+        }
+        
+        if(
+            (ry == 1 && headTail.x + size == canvas.width) ||
+            (rx == 1 && headTail.y == 0) ||
+            (ry == -1 && headTail.x == 0) ||
+            (rx == -1 && headTail.x + size == canvas.height)
+        ) {
+            this.state[this.isLeftClearIndex] = 0
+        }
+
+        for( let i = 0; i < snake.tail.length - 2; i++) {
+            let ithTail = snake.tail[i];
+            if(rx == 0 && headTail.y == ithTail.y) {
+                correspondingSize = ry == 1 ? -size: size
+                if(headTail.x = ithTail.x + correspondingSize) {
+                    this.state[this.isLeftClearIndex] = 0
+                }
+                if(headTail.x == ithTail.x - correspondingSize) {
+                    this.state[this.isRightClearIndex] = 0
+                }
+            } else if(ry == 0 && headTail.x == ithTail.x) {
+                correspondingSize = rx == 1 ? -size: size
+                if(headTail.y = ithTail.y + correspondingSize) {
+                    this.state[this.isRightClearIndex] = 0
+                }
+                if(headTail.y == ithTail.y - correspondingSize) {
+                    this.state[this.isLeftClearIndex] = 0
+                }
+            }
+            if (
+                rx = 0 &&
+                headTail.x == ithTail.x &&
+                headTail.y + ry * size == ithTail.y
+            ) {
+                this.state[this.isAheadClearIndex] = 0
+            }
+            if (
+                ry = 0 &&
+                headTail.y == ithTail.y && 
+                headTail.y + ry * size == ithTail.y
+            ) {
+                this.state[this.isAheadClearIndex] = 0
+            }
+        }
+    }
 }
 
 class Snake {
