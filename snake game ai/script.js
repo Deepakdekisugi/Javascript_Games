@@ -126,7 +126,8 @@ class RLSnake{
     }
 
     calculateState() {
-        
+        this.state = this.initialState.slice()
+        this.checkDirection()
     }
 
     upadate() {
