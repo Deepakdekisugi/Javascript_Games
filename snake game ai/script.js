@@ -239,8 +239,22 @@ class RLSnake{
 
             if (ry == -1 && apple.x > headTail.x) {
                 index = this.isAppleRightIndex;
-            }else if(ry == -1 && apple.x < headTail.x) 
-            index = this.isAppleLeftIndex;
+            }else if(ry == -1 && apple.x < headTail.x) {
+                index = this.isAppleLeftIndex;
+            }
+
+            if (rx == 1 && apple.y > headTail.y) {
+                index = this.isAppleRightIndex;
+            }else if(rx == -1 && apple.y < headTail.y) {
+                index = this.isAppleLeftIndex;
+            }
+
+            if (rx == -1 && apple.y > headTail.y) {
+                index = this.isAppleLeftIndex;
+            }else if(rx == -1 && apple.y < headTail.y) {
+                index = this.isAppleRightIndex;
+            }
+            if(index != -1) this.state[index] = 1;
         }
     }
 }
