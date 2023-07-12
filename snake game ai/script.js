@@ -19,7 +19,7 @@ window.onload = () => {
 }
 
 function gameLoop() {
-    setInterval(show, 1000/gameSpeed) // here gamespeed is our fps value
+    setInterval(show, 1000 / gameSpeed) // here gamespeed is our fps value
 }
 
 function show() {
@@ -35,11 +35,11 @@ function update() {
 }
 
 function eatApple() {
-    if(snake.tail[snake.tail.length - 1].x == apple.x &&
-        snake.tail[snake.tail.length - 1].y == apple.y){
-            snake.tail[snake.tail.length] = {x:apple.x, y: apple.y}
-            apple = new Apple();
-        }
+    if (snake.tail[snake.tail.length - 1].x == apple.x &&
+        snake.tail[snake.tail.length - 1].y == apple.y) {
+        snake.tail[snake.tail.length] = { x: apple.x, y: apple.y }
+        apple = new Apple();
+    }
 }
 
 function gameOver() {
@@ -48,19 +48,19 @@ function gameOver() {
 
     epochNumberElement.textContent = epochNumber++
 
-    averageScoreElement.textContent = (parseInt(averageScoreElement.textContent) * epochNumber +snake.tail.length -1) / epochNumber;
+    averageScoreElement.textContent = (parseInt(averageScoreElement.textContent) * epochNumber + snake.tail.length - 1) / epochNumber;
     snake.initVars();
 }
 
 function checkCollision() {
-    let headTail = snake.tail[snake.tail.length -1]
-    if(headTail.x <= -snake.size || //wall hit
+    let headTail = snake.tail[snake.tail.length - 1]
+    if (headTail.x <= -snake.size || //wall hit
         headTail.x >= canvas.width ||
         headTail.y <= -snake.size ||
         headTail.y >= canvas.height) {
-            gameOver()
-            return
-        }
+        gameOver()
+        return
+    }
 
     for (let i = 0; i < snake.tail.length - 2; i++) { //self bite
         if (headTail.x == snake.tail[i].x && headTail.y == snake.tail[i].y) {
@@ -71,21 +71,21 @@ function checkCollision() {
 }
 
 function draw() {
-    createRect(0,0,canvas.width, canvas.height, "black")
-    createRect(0,0, canvas.width, canvas.height)
+    createRect(0, 0, canvas.width, canvas.height, "black")
+    createRect(0, 0, canvas.width, canvas.height)
 
-    for (let i = 0; i < snake.tail.length; i++){
+    for (let i = 0; i < snake.tail.length; i++) {
         createRect(snake.tail[i].x + 2.5, snake.tail[i].y + 2.5,
-            snake.size - 5, snake.size- 5, "white")
+            snake.size - 5, snake.size - 5, "white")
     }
 
     canvasContext.font = "20px Arial"
     canvasContext.fillStyle = "#00FF42"
-    canvasContext.fillText("Score: " + (snake.tail.length -1),canvas.width - 120, 18)
+    canvasContext.fillText("Score: " + (snake.tail.length - 1), canvas.width - 120, 18)
     createRect(apple.x, apple.y, apple.size, apple.size, apple.color)
 }
 
-function createRect(x,y,width, height,color) {
+function createRect(x, y, width, height, color) {
     canvasContext.fillStyle = color
     canvasContext.fillRect(x, y, width, height)
 }
@@ -108,7 +108,7 @@ window.addEventListener("keydown", (event) => {
     }, 1)
 });
 
-class RLSnake{
+class RLSnake {
     constructor() {
         this.alpha = 0.2
         this.gamma = 0.2
@@ -135,10 +135,42 @@ class RLSnake{
         this.checkDirection()
 
         let action = this.getAction(this.state)
+        this.implementAction(action)
     }
 
     reward(state, action) {
+        let rewardForState = 0
+        this.calculateState()
+        let futureState = this.state
 
+        let stringifiedCurrentState = JSON.stringify(state)
+        let stringifiedFutureState = JSON.size(futureState)
+
+        if (stringifiedCurrentState != stringifiedFutureState) {
+            if (
+                (state[0] == 0 && action == 0) ||
+                (state[1] == 0 && action == 1) ||
+                (state[1] == 0 && action == 2)
+            ) {
+                rewardForState == 1;
+            }
+
+            if (
+                (state[this.isAheadClearIndex] == 1 && state[this.isAppleAheadIndex] == 1) ||
+                (state[this.isLeftClearIndex] == 1 && state[this.isAppleLeftIndex] == 1) ||
+                (state[this.isRightClearIndex] == 1 && state[this.isAppleRightIndex] == 1)
+            ) {
+                rewardForState += 1;
+            }
+        }
+        let optimumFutureValue = Math.max(
+            this.getQ(futureState, 0),
+            this.getQ(futureState, 1),
+            this.getQ(futureState, 2)
+        );
+
+        let updatedValue = this.alpha * (rewardForState + this.gamma * optimumFutureValue - this.getQ(state, action)) - 0.0001;
+        this.setQ(state, action, updatedValue);
     }
 
     implementAction(action) {
@@ -160,7 +192,7 @@ class RLSnake{
         let ry = snake.rotateY
 
         //wall added
-        if(
+        if (
             (ry == 1 && headTail.x == 0) ||
             (rx == 1 && headTail.y + size == canvas.height) ||
             (ry == -1 && headTail.x + size == canvas.width) ||
@@ -170,7 +202,7 @@ class RLSnake{
         }
 
 
-        if(
+        if (
             (ry == 1 && headTail.y + size == canvas.height) ||
             (rx == 1 && headTail.x + size == canvas.width) ||
             (ry == -1 && headTail.x == 0) ||
@@ -178,8 +210,8 @@ class RLSnake{
         ) {
             this.state[this.isAheadClearIndex] = 0;
         }
-        
-        if(
+
+        if (
             (ry == 1 && headTail.x + size == canvas.width) ||
             (rx == 1 && headTail.y == 0) ||
             (ry == -1 && headTail.x == 0) ||
@@ -188,22 +220,22 @@ class RLSnake{
             this.state[this.isLeftClearIndex] = 0;
         }
 
-        for( let i = 0; i < snake.tail.length - 2; i++) {
+        for (let i = 0; i < snake.tail.length - 2; i++) {
             let ithTail = snake.tail[i];
-            if(rx == 0 && headTail.y == ithTail.y) {
-                correspondingSize = ry == 1 ? -size: size
-                if(headTail.x = ithTail.x + correspondingSize) {
+            if (rx == 0 && headTail.y == ithTail.y) {
+                correspondingSize = ry == 1 ? -size : size
+                if (headTail.x = ithTail.x + correspondingSize) {
                     this.state[this.isLeftClearIndex] = 0;
                 }
-                if(headTail.x == ithTail.x - correspondingSize) {
+                if (headTail.x == ithTail.x - correspondingSize) {
                     this.state[this.isRightClearIndex] = 0;
                 }
-            } else if(ry == 0 && headTail.x == ithTail.x) {
-                correspondingSize = rx == 1 ? -size: size
-                if(headTail.y = ithTail.y + correspondingSize) {
+            } else if (ry == 0 && headTail.x == ithTail.x) {
+                correspondingSize = rx == 1 ? -size : size
+                if (headTail.y = ithTail.y + correspondingSize) {
                     this.state[this.isRightClearIndex] = 0;
                 }
-                if(headTail.y == ithTail.y - correspondingSize) {
+                if (headTail.y == ithTail.y - correspondingSize) {
                     this.state[this.isLeftClearIndex] = 0;
                 }
             }
@@ -216,49 +248,49 @@ class RLSnake{
             }
             if (
                 ry = 0 &&
-                headTail.y == ithTail.y && 
+                headTail.y == ithTail.y &&
                 headTail.x + ry * size == ithTail.x
             ) {
                 this.state[this.isAheadClearIndex] = 0;
             }
         }
 
-        if(headTail.x == apple.x && ry!= 0) {
-            if(ry == 1 && headTail.y < apple.y)
+        if (headTail.x == apple.x && ry != 0) {
+            if (ry == 1 && headTail.y < apple.y)
                 this.state(this.isAppleAheadIndex) = 1;
-            if(ry == -1 && headTail.y > apple.y) 
-            this.state[this.isAppleAheadIndex] = 1;
-        }else if(headTail.y == apple.y && rx!= 0) {
-            if(rx == 1 && headTail.x < apple.x)
+            if (ry == -1 && headTail.y > apple.y)
+                this.state[this.isAppleAheadIndex] = 1;
+        } else if (headTail.y == apple.y && rx != 0) {
+            if (rx == 1 && headTail.x < apple.x)
                 this.state(this.isAppleAheadIndex) = 1;
-            if(rx == -1 && headTail.x > apple.x) 
-            this.state[this.isAppleAheadIndex] = 1;
-        }else {
+            if (rx == -1 && headTail.x > apple.x)
+                this.state[this.isAppleAheadIndex] = 1;
+        } else {
             let index = -1
-            if(ry == 1 && apple.x > headTail.x) {
+            if (ry == 1 && apple.x > headTail.x) {
                 index = this.isAppleLeftIndex;
-            }else if(ry == 1 && apple.x < headTail.x) {
+            } else if (ry == 1 && apple.x < headTail.x) {
                 index = this.isAppleRightIndex;
             }
 
             if (ry == -1 && apple.x > headTail.x) {
                 index = this.isAppleRightIndex;
-            }else if(ry == -1 && apple.x < headTail.x) {
+            } else if (ry == -1 && apple.x < headTail.x) {
                 index = this.isAppleLeftIndex;
             }
 
             if (rx == 1 && apple.y > headTail.y) {
                 index = this.isAppleRightIndex;
-            }else if(rx == -1 && apple.y < headTail.y) {
+            } else if (rx == -1 && apple.y < headTail.y) {
                 index = this.isAppleLeftIndex;
             }
 
             if (rx == -1 && apple.y > headTail.y) {
                 index = this.isAppleLeftIndex;
-            }else if(rx == -1 && apple.y < headTail.y) {
+            } else if (rx == -1 && apple.y < headTail.y) {
                 index = this.isAppleRightIndex;
             }
-            if(index != -1) this.state[index] = 1;
+            if (index != -1) this.state[index] = 1;
         }
     }
 }
@@ -272,7 +304,7 @@ class Snake {
         this.x = 20;
         this.y = 20;
         this.size = 20;
-        this.tail = [{x:this.x, y:this.y}]
+        this.tail = [{ x: this.x, y: this.y }]
         this.rotateX = 0
         this.rotateY = 1
     }
@@ -307,15 +339,15 @@ class Snake {
     }
 }
 
-class Apple{
-    constructor(){
+class Apple {
+    constructor() {
         let isTouching
-        
+
         while (true) {
             isTouching = false;
             this.x = Math.floor(Math.random() * canvas.width / snake.size) * snake.size
             this.y = Math.floor(Math.random() * canvas.height / snake.size) * snake.size
-            
+
             for (let i = 0; i < snake.tail.length; i++) {
                 if (this.x == snake.tail[i].x && this.y == snake.tail[i].y) {
                     isTouching = true
