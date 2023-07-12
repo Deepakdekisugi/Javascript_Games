@@ -6,13 +6,16 @@ let highScore = 0;
 let averageScore = 0;
 let epochNumber = 0;
 let appleEated = false;
+let size = 20;
 
 let highScoreElement = document.getElementById("highScore");
 let averageScoreElement = document.getElementById("averageScore");
 let epochNumberElement = document.getElementById("epochNumber");
 
 gameSpeedElement.addEventListener("change", () => {
-    gameSpeed = parseInt(gameSpeedElement.textContent);
+    gameSpeed = parseInt(gameSpeedElement.value);
+    clearInterval(gameInterval);
+    gameLoop();
 });
 
 window.onload = () => {
@@ -20,7 +23,7 @@ window.onload = () => {
 }
 
 function gameLoop() {
-    setInterval(show, 1000 / gameSpeed) // here gamespeed is our fps value
+   gameInterval = setInterval(show, 1000 / gameSpeed) // here gamespeed is our fps value
 }
 
 function show() {
@@ -131,12 +134,12 @@ class RLSnake {
 
     calculateState() {
         this.state = this.initialState.slice()
-        this.checkDirection()
+        this.checkDirections()
     }
 
     update() {
         this.reward(this.state, this.getAction(this.state))
-        this.checkDirection()
+        this.checkDirections()
 
         let action = this.getAction(this.state)
         this.implementAction(action)
@@ -148,13 +151,13 @@ class RLSnake {
         let futureState = this.state
 
         let stringifiedCurrentState = JSON.stringify(state)
-        let stringifiedFutureState = JSON.size(futureState)
+        let stringifiedFutureState = JSON.stringify(futureState)
 
         if (stringifiedCurrentState != stringifiedFutureState) {
             if (
                 (state[0] == 0 && action == 0) ||
                 (state[1] == 0 && action == 1) ||
-                (state[1] == 0 && action == 2)
+                (state[2] == 0 && action == 2)
             ) {
                 rewardForState == 1;
             }
