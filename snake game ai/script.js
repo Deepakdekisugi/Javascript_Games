@@ -5,6 +5,7 @@ let gameSpeed = 10;
 let highScore = 0;
 let averageScore = 0;
 let epochNumber = 0;
+let appleEated = false;
 
 let highScoreElement = document.getElementById("highScore");
 let averageScoreElement = document.getElementById("averageScore");
@@ -32,6 +33,7 @@ function update() {
     snake.move()
     eatApple()
     checkCollision()
+    appleEated = false
 }
 
 function eatApple() {
@@ -39,6 +41,7 @@ function eatApple() {
         snake.tail[snake.tail.length - 1].y == apple.y) {
         snake.tail[snake.tail.length] = { x: apple.x, y: apple.y }
         apple = new Apple();
+        appleEated = true;
     }
 }
 
@@ -174,7 +177,7 @@ class RLSnake {
     }
 
     implementAction(action) {
-
+        
     }
 
     getQ(state, action) {
@@ -196,7 +199,31 @@ class RLSnake {
     }
 
     getAction(state) {
+        let q = {}
+        for( let i = 0; i < 3; i++) {
+            q[i] = this.getQ(state, i)
+        }
 
+        let items = Object.keys[q].map((key) => {
+            return [key, q[key]]
+        })
+        q  = items
+
+        if(!appleEated) {
+            this.noEatLoopCount ++
+        }
+
+        if(this.noEatLoopCount > this.maxNoEatLoopCount) {
+            this.noEatLoopCount = 0
+            gameOver()
+            return
+        }
+
+        let key = Object.entries(q).sort((x, y) => {
+            return y[1] - x[1]
+        })[0];
+
+        return parseInt(key[1][0]);
     }
 
     checkDirection() {
