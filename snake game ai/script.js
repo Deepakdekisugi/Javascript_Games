@@ -178,6 +178,15 @@ class RLSnake {
     }
 
     getQ(state, action) {
+        let config = state.slice()
+        config.push(action)
+        if(!(config in this.Q_table)) {
+            return 0;
+        }
+        return this.Q_table[config];
+    }
+
+    setQ(state, action) {
 
     }
 
