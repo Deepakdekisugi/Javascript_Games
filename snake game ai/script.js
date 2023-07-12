@@ -30,10 +30,11 @@ function show() {
 
 function update() {
     canvasContext.clearRect(0, 0, canvas.width, canvas.height)
-    snake.move()
-    eatApple()
-    checkCollision()
-    appleEated = false
+    snake.move();
+    eatApple();
+    rlSnake.update();
+    checkCollision();
+    appleEated = false;
 }
 
 function eatApple() {
@@ -133,7 +134,7 @@ class RLSnake {
         this.checkDirection()
     }
 
-    upadate() {
+    update() {
         this.reward(this.state, this.getAction(this.state))
         this.checkDirection()
 
@@ -177,7 +178,22 @@ class RLSnake {
     }
 
     implementAction(action) {
-        
+        if( typeof action === 'undefined') return
+        if(!action) return
+        if(action == 0) return
+
+        let isRight = action == 2? - 1 : 1
+
+        if(snake.rotateX = 1) {
+            snake.rotateY = -1 * isRight
+            snake.rotateX = 0
+        }else if(snake.rotateX = 1) {
+            snake.rotateY = 1 * isRight
+            snake.rotateX = 0
+        }else if(snake.rotateY = -1) {
+            snake.rotateX = -1 * isRight
+            snake.rotateY = 0
+        }
     }
 
     getQ(state, action) {
@@ -407,3 +423,4 @@ class Apple {
 
 const snake = new Snake();
 let apple = new Apple();
+let rlSnake = new RLSnake();
