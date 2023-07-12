@@ -186,8 +186,13 @@ class RLSnake {
         return this.Q_table[config];
     }
 
-    setQ(state, action) {
-
+    setQ(state, action, reward) {
+        let config = state.slice()
+        config.push(action)
+        if(!(config in this.Q_table)) {
+            this.Q_table[config] = 0;
+        }
+        this.Q_table[config] += reward;
     }
 
     getAction(state) {
