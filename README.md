@@ -11,12 +11,6 @@ The Games Repository is a collection of various games implemented using HTML, CS
 
 ## Games
 
-The repository currently contains the following games:
-
-- **Game 1**: A brief description of the first game.
-- **Game 2**: A brief description of the second game.
-- **Game 3**: A brief description of the third game.
-
 Feel free to explore each game folder in the repository for more detailed information on each game, including setup instructions and additional customization options.
 
 ## Getting Started
