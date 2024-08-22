@@ -40,5 +40,3 @@ The Games Repository is licensed under the [MIT License](LICENSE). You are free 
 ## Acknowledgments
 
 The Games Repository owes its existence to the countless developers who have contributed their time, knowledge, and creativity to the field of game development. Special thanks to the open-source community for sharing their game projects and inspiring others to learn and create.
-
-this comment is only to save my streaks.
