@@ -162,3 +162,62 @@ function hitTest(tween) {
 	}
 
 }
+
+function onMiss() {
+	// Damn!
+	showMessage(".miss");
+}
+
+function showMessage(selector) {
+	// handle all text animations by providing selector
+	TweenMax.killTweensOf(selector);
+	TweenMax.killChildTweensOf(selector);
+	TweenMax.set(selector, {
+		autoAlpha: 1
+	});
+	TweenMax.staggerFromTo(selector + " path", .5, {
+		rotation: -5,
+		scale: 0,
+		transformOrigin: "center"
+	}, {
+		scale: 1,
+		ease: Back.easeOut
+	}, .05);
+	TweenMax.staggerTo(selector + " path", .3, {
+		delay: 2,
+		rotation: 20,
+		scale: 0,
+		ease: Back.easeIn
+	}, .03);
+}
+
+
+
+function getMouseSVG(e) {
+	// normalize mouse position within svg coordinates
+	cursor.x = e.clientX;
+	cursor.y = e.clientY;
+	return cursor.matrixTransform(svg.getScreenCTM().inverse());
+}
+
+function getIntersection(segment1, segment2) {
+	// find intersection point of two line segments and whether or not the point is on either line segment
+	var dx1 = segment1.x2 - segment1.x1;
+	var dy1 = segment1.y2 - segment1.y1;
+	var dx2 = segment2.x2 - segment2.x1;
+	var dy2 = segment2.y2 - segment2.y1;
+	var cx = segment1.x1 - segment2.x1;
+	var cy = segment1.y1 - segment2.y1;
+	var denominator = dy2 * dx1 - dx2 * dy1;
+	if (denominator == 0) {
+		return null;
+	}
+	var ua = (dx2 * cy - dy2 * cx) / denominator;
+	var ub = (dx1 * cy - dy1 * cx) / denominator;
+	return {
+		x: segment1.x1 + ua * dx1,
+		y: segment1.y1 + ua * dy1,
+		segment1: ua >= 0 && ua <= 1,
+		segment2: ub >= 0 && ub <= 1
+	};
+}
