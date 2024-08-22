@@ -91,3 +91,74 @@ function aim(e) {
 	});
 
 }
+
+function loose() {
+	// release arrow
+	window.removeEventListener("mousemove", aim);
+	window.removeEventListener("mouseup", loose);
+
+	TweenMax.to("#bow", 0.4, {
+		scaleX: 1,
+		transformOrigin: "right center",
+		ease: Elastic.easeOut
+	});
+	TweenMax.to("#bow polyline", 0.4, {
+		attr: {
+			points: "88,200 88,250 88,300"
+		},
+		ease: Elastic.easeOut
+	});
+	// duplicate arrow
+	var newArrow = document.createElementNS("http://www.w3.org/2000/svg", "use");
+	newArrow.setAttributeNS('http://www.w3.org/1999/xlink', 'href', "#arrow");
+	arrows.appendChild(newArrow);
+
+	// animate arrow along path
+	var path = MorphSVGPlugin.pathDataToBezier("#arc");
+	TweenMax.to([newArrow], 0.5, {
+		force3D: true,
+		bezier: {
+			type: "cubic",
+			values: path,
+			autoRotate: ["x", "y", "rotation"]
+		},
+		onUpdate: hitTest,
+		onUpdateParams: ["{self}"],
+		onComplete: onMiss,
+		ease: Linear.easeNone
+	});
+	TweenMax.to("#arc", 0.3, {
+		opacity: 0
+	});
+	//hide previous arrow
+	TweenMax.set(".arrow-angle use", {
+		opacity: 0
+	});
+}
+
+function hitTest(tween) {
+	// check for collisions with arrow and target
+	var arrow = tween.target[0];
+	var transform = arrow._gsTransform;
+	var radians = transform.rotation * Math.PI / 180;
+	var arrowSegment = {
+		x1: transform.x,
+		y1: transform.y,
+		x2: (Math.cos(radians) * 60) + transform.x,
+		y2: (Math.sin(radians) * 60) + transform.y
+	}
+
+	var intersection = getIntersection(arrowSegment, lineSegment);
+	if (intersection.segment1 && intersection.segment2) {
+		tween.pause();
+		var dx = intersection.x - target.x;
+		var dy = intersection.y - target.y;
+		var distance = Math.sqrt((dx * dx) + (dy * dy));
+		var selector = ".hit";
+		if (distance < 7) {
+			selector = ".bullseye"
+		}
+		showMessage(selector);
+	}
+
+}
