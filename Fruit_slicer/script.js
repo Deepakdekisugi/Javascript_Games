@@ -62,7 +62,7 @@ $(function () {
     $("#trialsleft").empty();
     for (i = 0; i < trialsleft; i++) {
       $("#trialsleft").append(
-        '<img src="./images/wrong.png" , class="life">'
+        '<img src="images/wrong.png" , class="life">'
       );
     }
   }
@@ -127,7 +127,7 @@ $(function () {
   function chooseRandom() {
     $("#fruit1").attr(
       "src",
-      "./images/" +
+      "images/" +
         fruits[Math.round(9 * Math.random())] +
         ".png"
     );
