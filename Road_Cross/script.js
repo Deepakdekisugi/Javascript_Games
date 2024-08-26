@@ -81,3 +81,59 @@ const addLane = () => {
   scene.add(lane.mesh);
   lanes.push(lane);
 };
+const chicken = new Chicken();
+scene.add(chicken);
+
+hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
+scene.add(hemiLight);
+
+const initialDirLightPositionX = -100;
+const initialDirLightPositionY = -100;
+dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+dirLight.position.set(initialDirLightPositionX, initialDirLightPositionY, 200);
+dirLight.castShadow = true;
+dirLight.target = chicken;
+scene.add(dirLight);
+
+dirLight.shadow.mapSize.width = 2048;
+dirLight.shadow.mapSize.height = 2048;
+var d = 500;
+dirLight.shadow.camera.left = -d;
+dirLight.shadow.camera.right = d;
+dirLight.shadow.camera.top = d;
+dirLight.shadow.camera.bottom = -d;
+
+
+backLight = new THREE.DirectionalLight(0x000000, 0.4);
+backLight.position.set(200, 200, 50);
+backLight.castShadow = true;
+scene.add(backLight);
+
+const laneTypes = ["car", "truck", "forest"];
+const laneSpeeds = [2, 2.5, 3];
+const vechicleColors = [0xa52523, 0xbdb638, 0x78b14b];
+const threeHeights = [20, 45, 60];
+
+const initaliseValues = () => {
+  lanes = generateLanes();
+
+  currentLane = 0;
+  currentColumn = Math.floor(columns / 2);
+
+  previousTimestamp = null;
+
+  startMoving = false;
+  moves = [];
+  stepStartTimestamp;
+
+  chicken.position.x = 0;
+  chicken.position.y = 0;
+
+  camera.position.y = initialCameraPositionY;
+  camera.position.x = initialCameraPositionX;
+
+  dirLight.position.x = initialDirLightPositionX;
+  dirLight.position.y = initialDirLightPositionY;
+};
+
+initaliseValues();
