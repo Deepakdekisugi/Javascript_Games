@@ -33,7 +33,6 @@ const positionWidth = 42;
 const columns = 17;
 const boardWidth = positionWidth * columns;
 
-
 const stepTime = 200; // Miliseconds it takes for the chicken to take a step forward, backward, left or right
 
 let lanes;
@@ -103,7 +102,6 @@ dirLight.shadow.camera.right = d;
 dirLight.shadow.camera.top = d;
 dirLight.shadow.camera.bottom = -d;
 
-
 backLight = new THREE.DirectionalLight(0x000000, 0.4);
 backLight.position.set(200, 200, 50);
 backLight.castShadow = true;
@@ -139,24 +137,94 @@ const initaliseValues = () => {
 initaliseValues();
 
 const renderer = new THREE.WebGLRenderer({
-    alpha: true,
-    antialias: true,
+  alpha: true,
+  antialias: true,
+});
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+function Texture(width, height, rects) {
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext("2d");
+  context.fillStyle = "#ffffff";
+  context.fillRect(0, 0, width, height);
+  context.fillStyle = "rgba(0,0,0,0.6)";
+  rects.forEach((rect) => {
+    context.fillRect(rect.x, rect.y, rect.w, rect.h);
   });
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
-  
-  function Texture(width, height, rects) {
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    const context = canvas.getContext("2d");
-    context.fillStyle = "#ffffff";
-    context.fillRect(0, 0, width, height);
-    context.fillStyle = "rgba(0,0,0,0.6)";
-    rects.forEach((rect) => {
-      context.fillRect(rect.x, rect.y, rect.w, rect.h);
-    });
-    return new THREE.CanvasTexture(canvas);
-  }
+  return new THREE.CanvasTexture(canvas);
+}
+
+function Wheel() {
+  const wheel = new THREE.Mesh(
+    new THREE.BoxBufferGeometry(12 * zoom, 33 * zoom, 12 * zoom),
+    new THREE.MeshLambertMaterial({ color: 0x333333, flatShading: true })
+  );
+  wheel.position.z = 6 * zoom;
+  return wheel;
+}
+
+function Car() {
+  const car = new THREE.Group();
+  const color =
+    vechicleColors[Math.floor(Math.random() * vechicleColors.length)];
+
+  const main = new THREE.Mesh(
+    new THREE.BoxBufferGeometry(60 * zoom, 30 * zoom, 15 * zoom),
+    new THREE.MeshPhongMaterial({ color, flatShading: true })
+  );
+  main.position.z = 12 * zoom;
+  main.castShadow = true;
+  main.receiveShadow = true;
+  car.add(main);
+
+  const cabin = new THREE.Mesh(
+    new THREE.BoxBufferGeometry(33 * zoom, 24 * zoom, 12 * zoom),
+    [
+      new THREE.MeshPhongMaterial({
+        color: 0xcccccc,
+        flatShading: true,
+        map: carBackTexture,
+      }),
+      new THREE.MeshPhongMaterial({
+        color: 0xcccccc,
+        flatShading: true,
+        map: carFrontTexture,
+      }),
+      new THREE.MeshPhongMaterial({
+        color: 0xcccccc,
+        flatShading: true,
+        map: carRightSideTexture,
+      }),
+      new THREE.MeshPhongMaterial({
+        color: 0xcccccc,
+        flatShading: true,
+        map: carLeftSideTexture,
+      }),
+      new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true }), // top
+      new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true }), // bottom
+    ]
+  );
+  cabin.position.x = 6 * zoom;
+  cabin.position.z = 25.5 * zoom;
+  cabin.castShadow = true;
+  cabin.receiveShadow = true;
+  car.add(cabin);
+
+  const frontWheel = new Wheel();
+  frontWheel.position.x = -18 * zoom;
+  car.add(frontWheel);
+
+  const backWheel = new Wheel();
+  backWheel.position.x = 18 * zoom;
+  car.add(backWheel);
+
+  car.castShadow = true;
+  car.receiveShadow = false;
+
+  return car;
+}
