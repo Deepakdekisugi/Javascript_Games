@@ -235,3 +235,141 @@ const holes = [
   x: hole.column * (wallW + pathW) + (wallW / 2 + pathW / 2),
   y: hole.row * (wallW + pathW) + (wallW / 2 + pathW / 2),
 }));
+
+joystickHeadElement.addEventListener("mousedown", function (event) {
+    if (!gameInProgress) {
+      mouseStartX = event.clientX;
+      mouseStartY = event.clientY;
+      gameInProgress = true;
+      window.requestAnimationFrame(main);
+      noteElement.style.opacity = 0;
+      joystickHeadElement.style.cssText = `
+            animation: none;
+            cursor: grabbing;
+          `;
+    }
+  });
+  
+  window.addEventListener("mousemove", function (event) {
+    if (gameInProgress) {
+      const mouseDeltaX = -Math.minmax(mouseStartX - event.clientX, 15);
+      const mouseDeltaY = -Math.minmax(mouseStartY - event.clientY, 15);
+  
+      joystickHeadElement.style.cssText = `
+            left: ${mouseDeltaX}px;
+            top: ${mouseDeltaY}px;
+            animation: none;
+            cursor: grabbing;
+          `;
+  
+      const rotationY = mouseDeltaX * 0.8; // Max rotation = 12
+      const rotationX = mouseDeltaY * 0.8;
+  
+      mazeElement.style.cssText = `
+            transform: rotateY(${rotationY}deg) rotateX(${-rotationX}deg)
+          `;
+  
+      const gravity = 2;
+      const friction = 0.01; // Coefficients of friction
+  
+      accelerationX = gravity * Math.sin((rotationY / 180) * Math.PI);
+      accelerationY = gravity * Math.sin((rotationX / 180) * Math.PI);
+      frictionX = gravity * Math.cos((rotationY / 180) * Math.PI) * friction;
+      frictionY = gravity * Math.cos((rotationX / 180) * Math.PI) * friction;
+    }
+  });
+  
+  window.addEventListener("keydown", function (event) {
+    // If not an arrow key or space or H was pressed then return
+    if (![" ", "H", "h", "E", "e"].includes(event.key)) return;
+  
+    // If an arrow key was pressed then first prevent default
+    event.preventDefault();
+  
+    // If space was pressed restart the game
+    if (event.key == " ") {
+      resetGame();
+      return;
+    }
+  
+    // Set Hard mode
+    if (event.key == "H" || event.key == "h") {
+      hardMode = true;
+      resetGame();
+      return;
+    }
+  
+    // Set Easy mode
+    if (event.key == "E" || event.key == "e") {
+      hardMode = false;
+      resetGame();
+      return;
+    }
+  });
+  
+  function resetGame() {
+    previousTimestamp = undefined;
+    gameInProgress = false;
+    mouseStartX = undefined;
+    mouseStartY = undefined;
+    accelerationX = undefined;
+    accelerationY = undefined;
+    frictionX = undefined;
+    frictionY = undefined;
+  
+    mazeElement.style.cssText = `
+          transform: rotateY(0deg) rotateX(0deg)
+        `;
+  
+    joystickHeadElement.style.cssText = `
+          left: 0;
+          top: 0;
+          animation: glow;
+          cursor: grab;
+        `;
+  
+    if (hardMode) {
+      noteElement.innerHTML = `Click the joystick to start!
+            <p>Hard mode, Avoid black holes. Back to easy mode? Press E</p>`;
+    } else {
+      noteElement.innerHTML = `Click the joystick to start!
+            <p>Move every ball to the center. Ready for hard mode? Press H</p>`;
+    }
+    noteElement.style.opacity = 1;
+  
+    balls = [
+      { column: 0, row: 0 },
+      { column: 9, row: 0 },
+      { column: 0, row: 8 },
+      { column: 9, row: 8 },
+    ].map((ball) => ({
+      x: ball.column * (wallW + pathW) + (wallW / 2 + pathW / 2),
+      y: ball.row * (wallW + pathW) + (wallW / 2 + pathW / 2),
+      velocityX: 0,
+      velocityY: 0,
+    }));
+  
+    if (ballElements.length) {
+      balls.forEach(({ x, y }, index) => {
+        ballElements[index].style.cssText = `left: ${x}px; top: ${y}px; `;
+      });
+    }
+  
+    // Remove previous hole elements
+    holeElements.forEach((holeElement) => {
+      mazeElement.removeChild(holeElement);
+    });
+    holeElements = [];
+  
+    // Reset hole elements if hard mode
+    if (hardMode) {
+      holes.forEach(({ x, y }) => {
+        const ball = document.createElement("div");
+        ball.setAttribute("class", "black-hole");
+        ball.style.cssText = `left: ${x}px; top: ${y}px; `;
+  
+        mazeElement.appendChild(ball);
+        holeElements.push(ball);
+      });
+    }
+  }
